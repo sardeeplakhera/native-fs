@@ -1,0 +1,85 @@
+<meta http-equiv="origin-trial" content="AjAoYZFpfDBiteijnFrwVFnHnqd6QJ/TZZu40EHedJRfVDESqhj8DSkeI1w+eNJ4I8nUYLx+Rw8K2Dfxx7IQXw0AAABUeyJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0Ojg4ODgiLCJmZWF0dXJlIjoiTmF0aXZlRmlsZVN5c3RlbTIiLCJleHBpcnkiOjE1OTQ4MzYxMDB9">
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<button id="open">open file</button>
+<script>
+    let butOpenFile = document.querySelector("#open");
+    let fileHandle;
+    document.addEventListener('load', () => {
+        console.log("body loaded");
+    });
+    butOpenFile.addEventListener('click', async (e) => {
+        fileHandle = await window.chooseFileSystemEntries();
+        const file = await fileHandle.getFile();
+        const contents = await file.text();
+        console.log(contents);
+        const opts = {};
+        opts.writable = true;
+        fileHandle.requestPermission(opts);
+        writeFile(fileHandle, "wrote successfully");
+    });
+
+    // butOpenFile.addEventListener('click', async (e) => {
+    //     // const dir_ref = await self.chooseFileSystemEntries({type: 'open-directory'});
+    //     // const new_file = await dir_ref.getFile('hello.js', {create: true});
+    //     // const new_file_writer = await new_file.createWritable();
+    //     // await new_file_writer.write("hello world\n");
+    //     // await new_file_writer.close();
+
+    //     const font_dir = await FileSystemDirectoryHandle.getSystemDirectory({type: 'pictures-library'});
+    //     console.log(font_dir);
+    //     console.log(font_dir.getEntries());
+    //     // for await (const entry of font_dir.values()) {
+    //     //     console.log(entry);
+    //     // };
+    // });
+
+    async function getNewFileHandle() {
+        const opts = {
+            type: 'save-file',
+            accepts: [{
+            description: 'Text file',
+            extensions: ['txt'],
+            mimeTypes: ['text/plain'],
+            }],
+        };
+        const handle = await window.chooseFileSystemEntries(opts);
+        return handle;
+    }
+
+    async function writeFile(fileHandle, contents) {
+        // Create a FileSystemWritableFileStream to write to.
+        const writable = await fileHandle.createWritable();
+        // Write the contents of the file to the stream.
+        await writable.write(contents);
+        // Close the file and write the contents to disk.
+        await writable.close();
+    }
+
+    async function verifyPermission(fileHandle, withWrite) {
+        const opts = {};
+        if (withWrite) {
+            opts.writable = true;
+        }
+        // Check if we already have permission, if so, return true.
+        if (await fileHandle.queryPermission(opts) === 'granted') {
+            return true;
+        }
+        // Request permission, if the user grants permission, return true.
+        if (await fileHandle.requestPermission(opts) === 'granted') {
+            return true;
+        }
+        // The user didn't grant permission, return false.
+        return false;
+    }
+</script>
+</body>
+</html>
