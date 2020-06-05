@@ -16,31 +16,28 @@
     document.addEventListener('load', () => {
         console.log("body loaded");
     });
-    butOpenFile.addEventListener('click', async (e) => {
-        fileHandle = await window.chooseFileSystemEntries();
-        const file = await fileHandle.getFile();
-        const contents = await file.text();
-        console.log(contents);
-        const opts = {};
-        opts.writable = true;
-        fileHandle.requestPermission(opts);
-        writeFile(fileHandle, "wrote successfully");
-    });
-
     // butOpenFile.addEventListener('click', async (e) => {
-    //     // const dir_ref = await self.chooseFileSystemEntries({type: 'open-directory'});
-    //     // const new_file = await dir_ref.getFile('hello.js', {create: true});
-    //     // const new_file_writer = await new_file.createWritable();
-    //     // await new_file_writer.write("hello world\n");
-    //     // await new_file_writer.close();
-
-    //     const font_dir = await FileSystemDirectoryHandle.getSystemDirectory({type: 'pictures-library'});
-    //     console.log(font_dir);
-    //     console.log(font_dir.getEntries());
-    //     // for await (const entry of font_dir.values()) {
-    //     //     console.log(entry);
-    //     // };
+    //     fileHandle = await window.chooseFileSystemEntries();
+    //     const file = await fileHandle.getFile();
+    //     const contents = await file.text();
+    //     console.log(contents);
+    //     const opts = {};
+    //     opts.writable = true;
+    //     fileHandle.requestPermission(opts);
+    //     writeFile(fileHandle, "wrote successfully");
     // });
+
+    butOpenFile.addEventListener('click', async (e) => {
+        const dir_ref = await self.chooseFileSystemEntries({type: 'open-directory'});
+        const new_file = await dir_ref.getFile('hello.js', {create: true});
+        const new_file_writer = await new_file.createWritable();
+        await new_file_writer.write("hello world\n");
+        await new_file_writer.close();
+
+        // const font_dir = await FileSystemDirectoryHandle.getSystemDirectory({type: 'fonts'});
+        // console.log(font_dir);
+        // console.log(font_dir.getEntries());
+    });
 
     async function getNewFileHandle() {
         const opts = {
@@ -53,7 +50,7 @@
         };
         const handle = await window.chooseFileSystemEntries(opts);
         return handle;
-    }
+    }       
 
     async function writeFile(fileHandle, contents) {
         // Create a FileSystemWritableFileStream to write to.
