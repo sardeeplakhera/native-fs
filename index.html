@@ -9,25 +9,27 @@
     <title>Document</title>
 </head>
 <body>
-<button id="open">open folder</button>
+<button id="open-folder">open folder</button>
+<button id="open-file">open file</button>
 <script>
-    let butOpenFile = document.querySelector("#open");
+    let butOpenFile = document.querySelector("#open-file");
+    let butOpenFolder = document.querySelector("#open-folder");
     let fileHandle;
     document.addEventListener('load', () => {
         console.log("body loaded");
     });
-    // butOpenFile.addEventListener('click', async (e) => {
-    //     fileHandle = await window.chooseFileSystemEntries();
-    //     const file = await fileHandle.getFile();
-    //     const contents = await file.text();
-    //     console.log(contents);
-    //     const opts = {};
-    //     opts.writable = true;
-    //     fileHandle.requestPermission(opts);
-    //     writeFile(fileHandle, "wrote successfully");
-    // });
-
     butOpenFile.addEventListener('click', async (e) => {
+        fileHandle = await window.chooseFileSystemEntries();
+        const file = await fileHandle.getFile();
+        const contents = await file.text();
+        console.log(contents);
+        const opts = {};
+        opts.writable = true;
+        fileHandle.requestPermission(opts);
+        writeFile(fileHandle, "wrote successfully");
+    });
+
+    butOpenFolder.addEventListener('click', async (e) => {
             const dir_ref = await self.chooseFileSystemEntries({type: 'open-directory'});
             const new_file = await dir_ref.getFile('hello.js', {create: true});
             const new_file_writer = await new_file.createWritable();
